@@ -42,7 +42,6 @@ describe('API testing', () => {
             .expect(200)
             .then(({body})=> {
             const {articles} = body
-            console.log(body)
                 expect(articles).toHaveLength(12)
                 articles.forEach((article) => {
                     expect.objectContaining({
