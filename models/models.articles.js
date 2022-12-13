@@ -1,7 +1,7 @@
 const db = require('../db/connection')
 
 
-const selectArticlePath = () => {
+const selectArticleWithCommentCount = () => {
     const query = `
     SELECT articles.*, COUNT(comments.article_id)::INT AS comment_count
   FROM articles
@@ -13,4 +13,6 @@ const selectArticlePath = () => {
    
 }
 
-module.exports = {selectArticlePath}
+
+
+module.exports = {selectArticleWithCommentCount}

@@ -1,8 +1,8 @@
-const {selectArticlePath} = require('../models/models.articles')
+const {selectArticleWithCommentCount} = require('../models/models.articles')
 
 
 const getArticlePath = (request, response, next) => {
-  selectArticlePath()
+  selectArticleWithCommentCount()
       .then((articles) => {
         response.status(200).send({ articles });
       })

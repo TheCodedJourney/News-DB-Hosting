@@ -10,7 +10,7 @@ beforeEach(() => seed(testData))
 
 describe('API testing', () => {
     describe('GET Requests topics', () => {
-        test('200 - Should return correct values within the topics API. Format should be an array of objects for slug and description properties', () => {
+        test('2, Should return correct values within the topics API. Format should be an array of objects for slug and description properties', () => {
             return request(app)
             .get('/api/topics')
             .expect(200)
@@ -26,7 +26,7 @@ describe('API testing', () => {
                 })
         })  
     });
-        test('404 - It should return an error when the wrong path is provided', () => {
+        test('4, It should return an error when the wrong path is provided', () => {
             return request(app)
             .get('/api/topical')
             .expect(404)
@@ -51,10 +51,23 @@ describe('API testing', () => {
                         topic: expect.any(String),
                         created_at: expect.any(String),
                         votes: expect.any(Number),
-                        comment_count: expect.any(Number),
+                        comment_count: expect.any(Number)
                     })
                 })
             })
         })
+        test("200 It should should return article objects in date descending order", () => {
+            return request(app)
+              .get("/api/articles")
+              .expect(200)
+              .then(({ body: { articles } }) => {
+                expect(articles).toBeSortedBy("created_at", {descending: true });
+              });
+            });
+        // test('Respond with an article object with the following properties: "author", "title", "article_id", "body", "topic", "created_at", "votes"', () => {
+        //     return request(app)
+        //     .get('/api/articles/34')
+        //     .expect(200)
+        // });
     })
 });
