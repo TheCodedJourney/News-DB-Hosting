@@ -1,9 +1,12 @@
 const error400 = (error, request, response, next) => {
-    if(error.msg && error.status){
+    if(error.code === "22P02"){
+        response.status(400).send({msg: "Bad Request"})
+    } else if (error.msg && error.status ){
         response.status(error.status).send({msg: error.msg})
     } else {
         next(error)
     }
+
 }
 
 const error404 = (request, response, next)=> {

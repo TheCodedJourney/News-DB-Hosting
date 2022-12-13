@@ -26,7 +26,7 @@ describe('API testing', () => {
                 })
         })  
     });
-        test('4, It should return an error when the wrong path is provided', () => {
+        test('404, It should return an error when the wrong path is provided', () => {
             return request(app)
             .get('/api/topical')
             .expect(404)
@@ -64,10 +64,40 @@ describe('API testing', () => {
                 expect(articles).toBeSortedBy("created_at", {descending: true });
               });
             });
-        // test('Respond with an article object with the following properties: "author", "title", "article_id", "body", "topic", "created_at", "votes"', () => {
-        //     return request(app)
-        //     .get('/api/articles/34')
-        //     .expect(200)
-        // });
     })
+    describe("GET /api/articles/:article_id", () => {
+        test("should return an array of an article objects that matches the passed article_id", () => {
+          const articleObject = {
+          author: "rogersop",
+        body: "We all love Mitch and his wonderful, unique typing style. However, the volume of his typing has ALLEGEDLY burst another students eardrums, and they are now suing for damages",
+        created_at: "2020-05-06T01:14:00.000Z",
+        title: "Student SUES Mitch!",
+        topic: "mitch",
+          }
+          
+          return request(app)
+            .get("/api/articles/4")
+            .expect(200)
+            .then(({ body }) => {
+              const { articles } = body;
+              expect(articles).toMatchObject(articleObject);
+            });
+        });
+        test('404, responds with an error message when passed an article ID that does not exist', () => {
+          return request(app)
+            .get('/api/articles/500')
+            .expect(404)
+            .then(({ body }) => {
+              expect(body.msg).toBe('404 Not Found');
+            });
+        });
+        test('400, responds with an error message when passed an article ID that doesnt fit the entry requirements', () => {
+          return request(app)
+            .get('/api/articles/thisisnotvalidfriend')
+            .expect(400)
+            .then(({ body }) => {
+              expect(body.msg).toBe("Bad Request");
+            });
+        });
+      });
 });
