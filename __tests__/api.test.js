@@ -5,17 +5,16 @@ const db = require('../db/connection')
 const testData = require('../db/data/test-data/index')
 const seed = require('../db/seeds/seed') 
 
-afterAll(() => db.end)
+afterAll(() => db.end())
 beforeEach(() => seed(testData))
 
 describe('API testing', () => {
-    describe('GET Requests', () => {
+    describe('GET Requests topics', () => {
         test('200 - Should return correct values within the topics API. Format should be an array of objects for slug and description properties', () => {
             return request(app)
             .get('/api/topics')
             .expect(200)
             .then(({ body: { topics } }) => {
-                expect(topics).toBeInstanceOf(Array);
                 expect(topics).toHaveLength(3);
                 topics.forEach((topic)=>{
                     expect(topic).toEqual(
@@ -35,9 +34,28 @@ describe('API testing', () => {
              expect(msg).toBe("404 Not Found")   
             })
         });
-        // test('GET /api/description', () => {
-
-        //     expect().toEqual();
-        // });
+    })
+    describe('GET /api/articles', () => {
+        test('should return array of article objects including a comment_count property ', () => {
+            return request(app)
+            .get('/api/articles')
+            .expect(200)
+            .then(({body})=> {
+            const {articles} = body
+            console.log(body)
+                expect(articles).toHaveLength(12)
+                articles.forEach((article) => {
+                    expect.objectContaining({
+                        author: expect.any(String),
+                        title: expect.any(String),
+                        article_id: expect.any(Number),
+                        topic: expect.any(String),
+                        created_at: expect.any(String),
+                        votes: expect.any(Number),
+                        comment_count: expect.any(Number),
+                    })
+                })
+            })
+        })
     })
 });
