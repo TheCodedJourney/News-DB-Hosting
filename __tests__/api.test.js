@@ -162,4 +162,32 @@ describe('API testing', () => {
             });
         });
     });
+    describe('POST Request article/:id/comments', () => {
+        test("404 - responds with an error message when passed a user that does not exist", () => {
+            const newComment = {
+              username: "commentMaster",
+              body: "Nobis consequatur animi. Ullam nobis quaerat voluptates veniam.",
+            };
+            return request(app)
+              .post("/api/articles/6/comments")
+              .send(newComment)
+              .expect(404)
+              .then(({ body }) => {
+                expect(body.msg).toBe("Not Found");
+              });
+          });
+          test("404 - responds with an error message when passed no user", () => {
+            const newComment = {
+              username: "",
+              body: "Nobis consequatur animi. Ullam nobis quaerat voluptates veniam.",
+            };
+            return request(app)
+              .post("/api/articles/6/comments")
+              .send(newComment)
+              .expect(404)
+              .then(({ body }) => {
+                expect(body.msg).toBe("Not Found");
+              });
+          });
+    });
 });

@@ -1,5 +1,4 @@
-const comments = require('../db/data/test-data/comments');
-const {selectArticles, selectByArticleID, commentsByArticleId} = require('../models/models.articles')
+const {selectArticles, selectByArticleID, commentsByArticleId, addComment} = require('../models/models.articles')
 
 
 const getArticlePath = (request, response, next) => {
@@ -33,4 +32,13 @@ const getCommentsByArticleId = (request, response, next) => {
       })
     }
 
-module.exports = {getArticlePath, getArticleById, getCommentsByArticleId}
+const postComment = (request, response, next) => {
+      const { article_id } = request.params;
+      addComment(article_id, request.body)
+        .then((comment) => {
+          res.status(201).send({ comment });
+        })
+        .catch(next)
+    }
+
+module.exports = {getArticlePath, getArticleById, getCommentsByArticleId, postComment}

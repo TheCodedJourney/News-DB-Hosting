@@ -33,4 +33,15 @@ const commentsByArticleId = (article_id) => {
 };
 
 
-module.exports = {selectArticles, selectByArticleID, commentsByArticleId}
+addComment = (article_id, newComment) => {
+  
+    const { username, body } = newComment
+    return db
+      .query(
+        "INSERT INTO comments (body, votes, article_id, created_at, author) VALUES ($1, $2, $3, $4, $5) RETURNING *;",
+        [body, 0, article_id, new Date(), username]
+      )
+      .then(({ rows }) => rows[0])
+}
+
+module.exports = {selectArticles, selectByArticleID, commentsByArticleId, addComment}
