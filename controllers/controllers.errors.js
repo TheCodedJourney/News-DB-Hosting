@@ -1,3 +1,9 @@
+const psqlError = (error, request, response, next) => {
+    if (error.code === "22P02") response.status(400).send({ msg: "Bad request" });
+    else next(error);
+  };
+
+
 const error400 = (error, request, response, next) => {
     if(error.code === "22P02" ){
         response.status(400).send({msg: "Bad Request"})
@@ -14,11 +20,12 @@ const error404 = (request, response, next)=> {
 }
 
 const error500 = (error, request, response, next) => {
+    console.log(error) // This is a constant error reference
     response
       .status(500)
       .send({ msg: "500 Internal Server Error" });
   };
 
 
-  
-module.exports = {error400, error404, error500}
+
+module.exports = {error400, error404, error500, psqlError}

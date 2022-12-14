@@ -9,6 +9,7 @@ const getArticlePath = (request, response, next) => {
       })
       .catch(next)
   }
+
 const getArticleById = (request, response, next) => {
     const { article_id} = request.params;
     selectByArticleID(article_id)
@@ -23,22 +24,13 @@ const getArticleById = (request, response, next) => {
 
 const getCommentsByArticleId = (request, response, next) => {
     const { article_id } = request.params;
-    commentsByArticleId(article_id)
+    selectByArticleID(article_id).then(() => { return commentsByArticleId(article_id) })
       .then((comments) => {
-        console.log(comments)
-        if (comments.length === 0) {
-          return Promise.reject({
-            status: 404,
-            msg: `404 Not Found`,
-          });
-        }
         response.status(200).send({ comments });
       })
       .catch((error)=>{
         next(error)
       })
     }
-  
-
 
 module.exports = {getArticlePath, getArticleById, getCommentsByArticleId}
