@@ -10,9 +10,8 @@ const selectArticles = () => {
   GROUP BY articles.article_id
   ORDER BY articles.created_at DESC;`
     return db.query(query).then((result) =>{return result.rows })
-   
 }
-selectByArticleID = (article_id) => {
+const selectByArticleID = (article_id) => {
   return db
     .query(`SELECT * FROM articles WHERE article_id = $1`, [article_id])
     .then((result)=> {
@@ -27,8 +26,11 @@ selectByArticleID = (article_id) => {
     })
 };
 
+const commentsByArticleId = (article_id) => {
+  const query = `SELECT * FROM comments
+  WHERE article_id = $1 ORDER BY created_at DESC;`;
+  return db.query(query, [article_id]).then((result) => result.rows);
+};
 
 
-
-
-module.exports = {selectArticles, selectByArticleID}
+module.exports = {selectArticles, selectByArticleID, commentsByArticleId}
