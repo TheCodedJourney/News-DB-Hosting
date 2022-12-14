@@ -1,4 +1,4 @@
-const {selectArticles, selectByArticleID, commentsByArticleId, addComment} = require('../models/models.articles')
+const {selectArticles, selectByArticleID, commentsByArticleId, addComment, updateArticleVotes} = require('../models/models.articles')
 
 
 const getArticlePath = (request, response, next) => {
@@ -41,4 +41,17 @@ const postComment = (request, response, next) => {
         .catch(next)
     }
 
-module.exports = {getArticlePath, getArticleById, getCommentsByArticleId, postComment}
+const patchArticleVotes = (request, response, next) => {
+  const { article_id } = request.params;
+  const { body } = request;
+  Promise.all([
+    updateArticleVotes(article_id, body),
+    selectByArticleID(article_id),
+  ])
+    .then(([article]) => {
+      response.send({ article });
+    })
+    .catch(next);
+};
+
+module.exports = {getArticlePath, getArticleById, getCommentsByArticleId, postComment, patchArticleVotes}

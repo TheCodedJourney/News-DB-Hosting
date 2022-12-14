@@ -188,6 +188,85 @@ describe('API testing', () => {
               .then(({ body }) => {
                 expect(body.msg).toBe("Not Found");
               });
-          });
+            });
+            describe('PATCH /api/articles/:article_id', () => {
+                test('200 - should incremement article votes by correct number and return new total', () => {
+                    const newVote = {inc_votes: 1}
+                    return request(app)
+                    .patch('/api/articles/1')
+                    .send(newVote)
+                    .expect(200)
+                    .then(({ body: { article } })=>{
+                        expect(article).toEqual({
+                            body: "I find this existence challenging",
+                            votes: 101,
+                            author: "butter_bridge",
+                            article_id: 1,
+                            title: "Living in the shadow of a great man",
+                            created_at: "2020-07-09T20:11:00.000Z",
+                            topic: "mitch"
+                        });
+                    });
+                    
+                });
+
+                test('200 - should decrement article votes by correct number and return new total', () => {
+                    const newVote = {inc_votes: -1}
+                    return request(app)
+                    .patch('/api/articles/1')
+                    .send(newVote)
+                    .expect(200)
+                    .then(({ body: { article } })=>{
+                        expect(article).toEqual({
+                            body: "I find this existence challenging",
+                            votes: 99,
+                            author: "butter_bridge",
+                            article_id: 1,
+                            title: "Living in the shadow of a great man",
+                            created_at: "2020-07-09T20:11:00.000Z",
+                            topic: "mitch"
+                        })
+
+                    })
+                });
+                test('200 - votes should remain the same if no new votes added ', () => {
+                    const newVote = {inc_votes: 0}
+                    return request(app)
+                    .patch('/api/articles/1')
+                    .send(newVote)
+                    .expect(200)
+                    .then(({ body: { article } })=>{
+                        expect(article).toEqual({
+                            body: "I find this existence challenging",
+                            votes: 100,
+                            author: "butter_bridge",
+                            article_id: 1,
+                            title: "Living in the shadow of a great man",
+                            created_at: "2020-07-09T20:11:00.000Z",
+                            topic: "mitch"
+                        })
+                    });
+                });
+                test('404 - when article id does not exist', () => {
+                    const newVote = {inc_votes: 1}
+                    return request(app)
+                    .patch('/api/articles/910283')
+                    .send(newVote)
+                    .expect(404)
+                    .then(({ body: { msg } })=>{
+                        expect(msg).toBe("404 Not Found")
+                    })
+                });
+                test('400 - Bad Request when wrong data type entered', () => {
+                    const newVote = { voteCount: "1BillionDollars" };
+                         return request(app)
+                        .patch("/api/articles/1")
+                        .send(newVote)
+                        .expect(400)
+                        .then(({ body: { msg } }) => {
+                        expect(msg).toBe("Bad Request");
+                    });
+                });
+            });
+        });
     });
-});

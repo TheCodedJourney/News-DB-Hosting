@@ -33,8 +33,7 @@ const commentsByArticleId = (article_id) => {
 };
 
 
-addComment = (article_id, newComment) => {
-  
+const addComment = (article_id, newComment) => {
     const { username, body } = newComment
     return db
       .query(
@@ -44,4 +43,16 @@ addComment = (article_id, newComment) => {
       .then(({ rows }) => rows[0])
 }
 
-module.exports = {selectArticles, selectByArticleID, commentsByArticleId, addComment}
+const updateArticleVotes = (article_id, newVote) => {
+  const { inc_votes } = newVote;
+  return db
+    .query(
+      `UPDATE articles SET votes = votes + $1 WHERE article_id = $2 RETURNING *`,
+      [inc_votes, article_id]
+    )
+    .then(({ rows }) => {
+      return rows[0];
+    });
+}
+
+module.exports = {selectArticles, selectByArticleID, commentsByArticleId, addComment, updateArticleVotes}
