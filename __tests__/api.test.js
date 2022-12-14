@@ -134,7 +134,14 @@ describe('API testing', () => {
                 expect(comments).toEqual([])
             });
             });
-      
+        test("200 It should should return comments objects in date descending order", () => {
+            return request(app)
+                .get("/api/articles/2/comments")
+                .expect(200)
+                .then(({ body: { comments } }) => {
+                expect(comments).toBeSortedBy("created_at", {descending: true });
+                });
+            });
       
 
         test("404 - responds with an error message when passed an article ID that does not exist", () => {
