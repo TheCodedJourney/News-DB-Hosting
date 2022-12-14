@@ -1,5 +1,5 @@
 const error400 = (error, request, response, next) => {
-    if(error.code === "22P02"){
+    if(error.code === "22P02" ){
         response.status(400).send({msg: "Bad Request"})
     } else if (error.msg && error.status ){
         response.status(error.status).send({msg: error.msg})
@@ -19,4 +19,6 @@ const error500 = (error, request, response, next) => {
       .send({ msg: "500 Internal Server Error" });
   };
 
+
+  
 module.exports = {error400, error404, error500}

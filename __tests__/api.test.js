@@ -99,5 +99,43 @@ describe('API testing', () => {
               expect(body.msg).toBe("Bad Request");
             });
         });
-      });
+    });
+    describe("GET /api/articles/:article_id/comments", () => {
+        test("returns an array of category objects", () => {
+            return request(app)
+            .get("/api/articles/5/comments")
+            .expect(200)
+            .then(({ body }) => {
+                const { comments } = body;
+                expect(comments).toHaveLength(2)
+                comments.forEach((comment) => {
+                expect(comment).toEqual(
+                    expect.objectContaining({
+                    body: expect.any(String),
+                    author: expect.any(String),
+                    votes: expect.any(Number),
+                    created_at: expect.any(String),
+                    comment_id: expect.any(Number),
+                    })
+                );
+                });
+            });
+        });
+        test("404 - responds with an error message when passed an article ID that does not exist", () => {
+            return request(app)
+            .get("/api/articles/22842/comments")
+            .expect(404)
+            .then(({ body }) => {
+                expect(body.msg).toBe("404 Not Found");
+            });
+        });
+        test("400 - responds with an error message when passed a bad article ID", () => {
+            return request(app)
+            .get("/api/articles/thisisinvalidmyfriend/comments")
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg).toBe("Bad Request");
+            });
+        });
+    });
 });
