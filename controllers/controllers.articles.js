@@ -1,4 +1,4 @@
-const {selectArticles, selectByArticleID, commentsByArticleId, addComment, updateArticleVotes} = require('../models/models.articles')
+const {selectArticles, selectByArticleID, commentsByArticleId, addComment, updateArticleVotes, selectUsers} = require('../models/models.articles')
 
 
 const getArticlePath = (request, response, next) => {
@@ -54,4 +54,12 @@ const patchArticleVotes = (request, response, next) => {
     .catch(next);
 };
 
-module.exports = {getArticlePath, getArticleById, getCommentsByArticleId, postComment, patchArticleVotes}
+const getUsers = (request, response, next) => {
+  selectUsers().then((users)=> {
+        response.send({users})
+    })
+    .catch(next)
+  }
+
+
+module.exports = {getArticlePath, getArticleById, getCommentsByArticleId, postComment, patchArticleVotes, getUsers}
