@@ -162,6 +162,7 @@ describe('API testing', () => {
             });
         });
     });
+  
     describe('POST Request article/:id/comments', () => {
         test("404 - responds with an error message when passed a user that does not exist", () => {
             const newComment = {
@@ -189,84 +190,140 @@ describe('API testing', () => {
                 expect(body.msg).toBe("Not Found");
               });
             });
-            describe('PATCH /api/articles/:article_id', () => {
-                test('200 - should incremement article votes by correct number and return new total', () => {
-                    const newVote = {inc_votes: 1}
-                    return request(app)
-                    .patch('/api/articles/1')
-                    .send(newVote)
-                    .expect(200)
-                    .then(({ body: { article } })=>{
-                        expect(article).toEqual({
-                            body: "I find this existence challenging",
-                            votes: 101,
-                            author: "butter_bridge",
-                            article_id: 1,
-                            title: "Living in the shadow of a great man",
-                            created_at: "2020-07-09T20:11:00.000Z",
-                            topic: "mitch"
-                        });
+        });
+        describe('PATCH /api/articles/:article_id', () => {
+            test('200 - should incremement article votes by correct number and return new total', () => {
+                const newVote = {inc_votes: 1}
+                return request(app)
+                .patch('/api/articles/1')
+                .send(newVote)
+                .expect(200)
+                .then(({ body: { article } })=>{
+                    expect(article).toMatchObject({
+                        body: "I find this existence challenging",
+                        votes: 101,
+                        author: "butter_bridge",
+                        article_id: 1,
+                        title: "Living in the shadow of a great man",
+                        created_at: "2020-07-09T20:11:00.000Z",
+                        topic: "mitch"
                     });
-                    
                 });
+                
+            });
 
-                test('200 - should decrement article votes by correct number and return new total', () => {
-                    const newVote = {inc_votes: -1}
-                    return request(app)
-                    .patch('/api/articles/1')
-                    .send(newVote)
-                    .expect(200)
-                    .then(({ body: { article } })=>{
-                        expect(article).toEqual({
-                            body: "I find this existence challenging",
-                            votes: 99,
-                            author: "butter_bridge",
-                            article_id: 1,
-                            title: "Living in the shadow of a great man",
-                            created_at: "2020-07-09T20:11:00.000Z",
-                            topic: "mitch"
-                        })
+            test('200 - should decrement article votes by correct number and return new total', () => {
+                const newVote = {inc_votes: -1}
+                return request(app)
+                .patch('/api/articles/1')
+                .send(newVote)
+                .expect(200)
+                .then(({ body: { article } })=>{
+                    expect(article).toMatchObject({
+                        body: "I find this existence challenging",
+                        votes: 99,
+                        author: "butter_bridge",
+                        article_id: 1,
+                        title: "Living in the shadow of a great man",
+                        created_at: "2020-07-09T20:11:00.000Z",
+                        topic: "mitch"
+                    })
 
+                })
+            });
+            test('200 - votes should remain the same if no new votes added ', () => {
+                const newVote = {inc_votes: 0}
+                return request(app)
+                .patch('/api/articles/1')
+                .send(newVote)
+                .expect(200)
+                .then(({ body: { article } })=>{
+                    expect(article).toMatchObject({
+                        body: "I find this existence challenging",
+                        votes: 100,
+                        author: "butter_bridge",
+                        article_id: 1,
+                        title: "Living in the shadow of a great man",
+                        created_at: "2020-07-09T20:11:00.000Z",
+                        topic: "mitch"
                     })
                 });
-                test('200 - votes should remain the same if no new votes added ', () => {
-                    const newVote = {inc_votes: 0}
-                    return request(app)
-                    .patch('/api/articles/1')
+            });
+            test('404 - when article id does not exist', () => {
+                const newVote = {inc_votes: 1}
+                return request(app)
+                .patch('/api/articles/910283')
+                .send(newVote)
+                .expect(404)
+                .then(({ body: { msg } })=>{
+                    expect(msg).toBe("404 Not Found")
+                })
+            });
+            
+            test('400 - Bad Request when wrong data type entered', () => {
+                const newVote = { voteCount: "1BillionDollars" };
+                        return request(app)
+                    .patch("/api/articles/12")
                     .send(newVote)
-                    .expect(200)
-                    .then(({ body: { article } })=>{
-                        expect(article).toEqual({
-                            body: "I find this existence challenging",
-                            votes: 100,
-                            author: "butter_bridge",
-                            article_id: 1,
-                            title: "Living in the shadow of a great man",
-                            created_at: "2020-07-09T20:11:00.000Z",
-                            topic: "mitch"
-                        })
-                    });
+                    .expect(400)
+                    .then(({ body: { msg } }) => {
+                    expect(msg).toBe("Bad Request");
                 });
-                test('404 - when article id does not exist', () => {
-                    const newVote = {inc_votes: 1}
-                    return request(app)
-                    .patch('/api/articles/910283')
+            });
+            test('400 - Bad Request when wrong key is passed', () => {
+                const newVote = { daveyJones: 1 };
+                        return request(app)
+                    .patch("/api/articles/12")
                     .send(newVote)
-                    .expect(404)
-                    .then(({ body: { msg } })=>{
-                        expect(msg).toBe("404 Not Found")
-                    })
+                    .expect(400)
+                    .then(({ body: { msg } }) => {
+                    expect(msg).toBe("Bad Request");
                 });
-                test('400 - Bad Request when wrong data type entered', () => {
-                    const newVote = { voteCount: "1BillionDollars" };
-                         return request(app)
-                        .patch("/api/articles/1")
-                        .send(newVote)
-                        .expect(400)
-                        .then(({ body: { msg } }) => {
-                        expect(msg).toBe("Bad Request");
-                    });
+            });
+            test('400 - Bad Request when newVote has no properties', () => {
+                const newVote = {};
+                        return request(app)
+                    .patch("/api/articles/12")
+                    .send(newVote)
+                    .expect(400)
+                    .then(({ body: { msg } }) => {
+                    expect(msg).toBe("Bad Request");
                 });
             });
         });
+    });
+    describe("GET /api/users", () => {
+      test("200 - Should return an array of users", () => {
+        return request(app)
+          .get("/api/users")
+          .expect(200)
+          .then(({ body: { users } }) => {
+            expect(users).toBeInstanceOf(Array);
+            expect(users).toHaveLength(4);
+          });
+      });
+      test("200 - Should return an array of objects of users with correct properties", () => {
+        return request(app)
+          .get("/api/users")
+          .expect(200)
+          .then(({ body: { users } }) => {
+            users.forEach((user) => {
+              expect(user).toMatchObject(
+                expect.objectContaining({
+                  username: expect.any(String),
+                  name: expect.any(String),
+                  avatar_url: expect.any(String),
+                })
+              );
+            });
+          });
+      });
+      test("404 - It should return an error when incorrect path is provided", () => {
+        return request(app)
+          .get("/api/userz")
+          .expect(404)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("404 Not Found");
+          });
+      });
     });

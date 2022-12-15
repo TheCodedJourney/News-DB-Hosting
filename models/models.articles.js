@@ -55,4 +55,5 @@ const updateArticleVotes = (article_id, newVote) => {
     });
 }
 
+
 module.exports = {selectArticles, selectByArticleID, commentsByArticleId, addComment, updateArticleVotes}

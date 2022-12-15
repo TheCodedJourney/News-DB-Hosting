@@ -1,4 +1,4 @@
-const {selectArticles, selectByArticleID, commentsByArticleId, addComment, updateArticleVotes} = require('../models/models.articles')
+const {selectArticles, selectByArticleID, commentsByArticleId, addComment, updateArticleVotes, selectUsers} = require('../models/models.articles')
 
 
 const getArticlePath = (request, response, next) => {
