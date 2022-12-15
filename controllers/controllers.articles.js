@@ -54,12 +54,4 @@ const patchArticleVotes = (request, response, next) => {
     .catch(next);
 };
 
-const getUsers = (request, response, next) => {
-  selectUsers().then((users)=> {
-        response.send({users})
-    })
-    .catch(next)
-  }
-
-
-module.exports = {getArticlePath, getArticleById, getCommentsByArticleId, postComment, patchArticleVotes, getUsers}
+module.exports = {getArticlePath, getArticleById, getCommentsByArticleId, postComment, patchArticleVotes}
