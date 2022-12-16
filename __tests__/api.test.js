@@ -56,6 +56,8 @@ describe('API testing', () => {
                 })
             })
         })
+        
+          
         test("200 It should should return article objects in date descending order", () => {
             return request(app)
               .get("/api/articles")
@@ -80,12 +82,26 @@ describe('API testing', () => {
             .get("/api/articles/4")
             .expect(200)
             .then(({ body }) => {
-              const { articles } = body;
-              expect(articles).toMatchObject(articleObject);
-              expect(articles.article_id).toEqual(articleRequest)
+              const { article } = body;
+              expect(article).toMatchObject(articleObject);
+              expect(article.article_id).toEqual(articleRequest)
               
             });
         });
+        test("200 - Must obtain the correct values of comment_count from test data ", () => {
+            return request(app)
+              .get("/api/articles")
+              .expect(200)
+              .then(({ body: { articles } }) => {
+                const commentCount = articles.map((article) => {
+                  return article.comment_count;
+                });
+                expect(commentCount).toEqual([
+                  2, 1, 0, 0, 2, 11, 2, 0, 0, 0, 0, 0,
+                ]);
+              });
+          });
+
         test('404, responds with an error message when passed an article ID that does not exist', () => {
           return request(app)
             .get('/api/articles/500')
@@ -191,6 +207,8 @@ describe('API testing', () => {
               });
             });
         });
+
+
         describe('PATCH /api/articles/:article_id', () => {
             test('200 - should incremement article votes by correct number and return new total', () => {
                 const newVote = {inc_votes: 1}
