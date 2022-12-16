@@ -291,7 +291,6 @@ describe('API testing', () => {
                 });
             });
         });
-    });
     describe("GET /api/users", () => {
       test("200 - Should return an array of users", () => {
         return request(app)
@@ -326,4 +325,58 @@ describe('API testing', () => {
             expect(msg).toBe("404 Not Found");
           });
       });
+
     });
+    describe('GET /api/articles (queries)', () => {
+        test("200 - It should should return the articles sorted by any valid column (alphabetically or ascending)", () => {
+            return request(app)
+              .get("/api/articles?sort_by=author")
+              .expect(200)
+              .then(({ body: { articles } }) => {
+                expect(articles).toBeSortedBy("author");
+              });
+          });
+          test("200 - It should should return the articles based on the topic provided", () => {
+            return request(app)
+              .get("/api/articles?topic=mitch")
+              .expect(200)
+              .then(({ body: { articles } }) => {
+                articles.forEach((article) => {
+                  expect(article.topic).toEqual("mitch");
+                });
+              });
+          });
+          test("200 - It should should return the articles in ascending order when order query = ASC (not sensitive to lower or uppercase)", () => {
+            return request(app)
+              .get("/api/articles?order=ASC")
+              .expect(200)
+              .then(({ body: { articles } }) => {
+                expect(articles).toBeSortedBy("created_at");
+              });
+          });
+          test("400 - sent an invalid column to sort by", () => {
+            return request(app)
+              .get("/api/articles?order=asc; DROPTABLES")
+              .expect(400)
+              .then(({ body: { msg } }) => {
+                expect(msg).toBe("Bad Request");
+              });
+          });
+          test("404 - sent a topic that does not exist", () => {
+            return request(app)
+              .get("/api/articles?topic=jake; DROPTABLES")
+              .expect(404)
+              .then(({ body: { msg } }) => {
+                expect(msg).toBe("404 Not Found");
+              });
+          });
+          test("400 - sent an invalid order", () => {
+            return request(app)
+              .get("/api/articles?order=asc; DROPTABLES")
+              .expect(400)
+              .then(({ body: { msg } }) => {
+                expect(msg).toBe("Bad Request");
+              });            
+        });
+    });
+});

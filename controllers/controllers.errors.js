@@ -4,7 +4,6 @@ const psqlError = (error, request, response, next) => {
     else next(error);
   };
 
-
 const error400 = (error, request, response, next) => {
     if(error.code === "22P02" ){
         response.status(400).send({msg: "Bad Request"})
@@ -25,7 +24,5 @@ const error500 = (error, request, response, next) => {
       .status(500)
       .send({ msg: "500 Internal Server Error" });
   };
-
-
 
 module.exports = {error400, error404, error500, psqlError}

@@ -5,4 +5,6 @@ const selectAllUsers = () => {
     return db.query(queryString).then(({rows}) => {return rows})
 }
 
+
+
 module.exports = {selectAllUsers}
