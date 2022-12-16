@@ -92,7 +92,8 @@ const checkItemExistence = (category, element) => {
   else if (category === "article_id") query += `WHERE article_id = $1;`;
 
   return db.query(query, [element]).then((data) => {
-    if (data.rowCount === 0) return Promise.reject({ status: 404, msg: "404 Not Found" });
+    if (data.rowCount === 0) 
+    return Promise.reject({ status: 404, msg: "404 Not Found" });
     else return true;
   });
 };
