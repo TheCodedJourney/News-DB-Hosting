@@ -55,7 +55,6 @@ const patchArticleVotes = (request, response, next) => {
 };
 
 const getArticleQuery = (request, response, next) => {
-
   const { topic, sort_by, order } = request.params
   articleQuery(sort_by, order, topic)
   .then((articles) => response.status(200).send({ articles }))
@@ -64,3 +63,4 @@ const getArticleQuery = (request, response, next) => {
 }
 
 module.exports = {getArticlePath, getArticleById, getCommentsByArticleId, postComment, patchArticleVotes, getArticleQuery}
+
