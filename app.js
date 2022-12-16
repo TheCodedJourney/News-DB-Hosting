@@ -1,7 +1,7 @@
 const express = require("express")
 
 const {getTopicPath} = require('./controllers/controllers.topic')
-const {postComment, getArticlePath, getArticleById, getCommentsByArticleId, patchArticleVotes} = require('./controllers/controllers.articles')
+const {postComment, getArticlePath, getArticleById, getCommentsByArticleId, patchArticleVotes, getArticleQuery} = require('./controllers/controllers.articles')
 const {psqlError, error400, error404, error500} = require('./controllers/controllers.errors')
 const {getUsers} = require('./controllers/controllers.users')
 
