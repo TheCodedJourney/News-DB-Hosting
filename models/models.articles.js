@@ -98,4 +98,15 @@ const checkItemExistence = (category, element) => {
   });
 };
 
-module.exports = {selectArticles, selectByArticleID, commentsByArticleId, addComment, updateArticleVotes, checkItemExistence}
+const deleteCommentByIdSelection = (comment_Id) => {
+  const queryString = `
+  DELETE FROM comments
+  WHERE comment_id = $1
+  RETURNING *;
+  `;
+  return db.query(queryString, [comment_Id]).then(({ rows }) => {
+    return rows;
+  });
+};
+
+module.exports = {selectArticles, selectByArticleID, commentsByArticleId, addComment, updateArticleVotes, checkItemExistence, deleteCommentByIdSelection}
