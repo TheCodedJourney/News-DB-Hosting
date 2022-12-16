@@ -42,25 +42,25 @@ const selectArticles = (sort_by = "created_at", order = "DESC", topic) => {
   });
 };
 
-const selectByArticleID = (article_id) => {
-  return db
-    .query(`SELECT * FROM articles WHERE article_id = $1`, [article_id])
-    .then((result)=> {
-      if(result.rowCount === 0){ 
-        return Promise.reject({status: 404, msg:"404 Not Found"})
-      }else {
-        return result.rows[0]
-      }})
-
-    .catch((error) =>{
-      return Promise.reject(error)
-    })
+const selectByArticleID = (articleId) => {
+  const queryString = `
+  SELECT articles.*, COUNT(comments.article_id)::INT AS comment_count
+  FROM articles
+  LEFT JOIN comments ON articles.article_id = comments.article_id
+  WHERE articles.article_id = $1
+  GROUP BY articles.article_id;
+  `;
+  return db.query(queryString, [articleId]).then(({ rows }) => {
+    if (rows.length === 0)
+      return Promise.reject({ status: 404, msg: "404 Not Found" });
+    return rows[0];
+  });
 };
 
 const commentsByArticleId = (article_id) => {
   const query = `SELECT * FROM comments
   WHERE article_id = $1 ORDER BY created_at DESC;`;
-  return db.query(query, [article_id]).then((result) => result.rows);
+  return db.query(query, [article_id]).then((result) => {return result.rows});
 };
 
 
@@ -92,7 +92,8 @@ const checkItemExistence = (category, element) => {
   else if (category === "article_id") query += `WHERE article_id = $1;`;
 
   return db.query(query, [element]).then((data) => {
-    if (data.rowCount === 0) return Promise.reject({ status: 404, msg: "404 Not Found" });
+    if (data.rowCount === 0) 
+    return Promise.reject({ status: 404, msg: "404 Not Found" });
     else return true;
   });
 };
