@@ -397,4 +397,23 @@ describe('API testing', () => {
               });            
         });
     });
+    describe("DELETE /api/comments/:comment_id", () => {
+      test("400 - wrong Id Type", () => {
+        return request(app)
+          .delete("/api/comments/three")
+          .expect(400)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("Bad Request");
+          });
+      });
+      test("404 - comment does not exist", () => {
+        return request(app)
+          .delete("/api/comments/300")
+          .expect(404)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("Not Found")
+
+          });
+        });
+    });
 });

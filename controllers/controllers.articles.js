@@ -1,4 +1,4 @@
-const {selectArticles, selectByArticleID, commentsByArticleId, addComment, updateArticleVotes, checkItemExistence, articleQuery} = require('../models/models.articles')
+const {selectArticles, selectByArticleID, commentsByArticleId, addComment, updateArticleVotes, checkItemExistence, articleQuery, deleteCommentByIdSelection} = require('../models/models.articles')
 
 const getArticlePath = (request, response, next) => {
   const { sort_by, order, topic } = request.query;
@@ -62,5 +62,18 @@ const getArticleQuery = (request, response, next) => {
 
 }
 
-module.exports = {getArticlePath, getArticleById, getCommentsByArticleId, postComment, patchArticleVotes, getArticleQuery}
+const deleteComment = (request, response, next) => {
+  const comment_id = request.params.comment_id;
+  const promise = [deleteCommentByIdSelection(comment_id)];
+
+  promise.push(checkItemExistence("comment_id", comment_id));
+  Promise.all(promise)
+    .then((deletedComment) => {
+      console.log("im here")
+      response.status(204).send({ deletedComment });
+    })
+    .catch((error) => next(error));
+  }
+
+module.exports = {getArticlePath, getArticleById, getCommentsByArticleId, postComment, patchArticleVotes, getArticleQuery, deleteComment}
 
