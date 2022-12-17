@@ -1,7 +1,7 @@
 const express = require("express")
 
 const {getTopicPath} = require('./controllers/controllers.topic')
-const {postComment, getArticlePath, getArticleById, getCommentsByArticleId, patchArticleVotes, deleteComment} = require('./controllers/controllers.articles')
+const {postComment, getArticlePath, getArticleById, getCommentsByArticleId, patchArticleVotes, deleteComment, jsonInfo} = require('./controllers/controllers.articles')
 const {psqlError, error400, error404, error500} = require('./controllers/controllers.errors')
 const {getUsers} = require('./controllers/controllers.users')
 
@@ -10,6 +10,7 @@ app.use(express.json())
 
 app.get("/api/topics", getTopicPath);
 app.get("/api/users", getUsers);
+app.get("/api", jsonInfo)
 app.get("/api/articles", getArticlePath);
 app.get("/api/articles/:article_id", getArticleById);
 app.get("/api/articles/:article_id/comments", getCommentsByArticleId);

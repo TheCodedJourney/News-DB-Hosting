@@ -1,4 +1,5 @@
 const {selectArticles, selectByArticleID, commentsByArticleId, addComment, updateArticleVotes, checkItemExistence, articleQuery, deleteCommentByIdSelection} = require('../models/models.articles')
+const endpoints = require("../endpoints.json");
 
 const getArticlePath = (request, response, next) => {
   const { sort_by, order, topic } = request.query;
@@ -75,5 +76,9 @@ const deleteComment = (request, response, next) => {
     .catch((error) => next(error));
   }
 
-module.exports = {getArticlePath, getArticleById, getCommentsByArticleId, postComment, patchArticleVotes, getArticleQuery, deleteComment}
+  const jsonInfo = (request, response, next) => {
+    response.status(200).send({ endpoints });
+  };
+
+module.exports = {getArticlePath, getArticleById, getCommentsByArticleId, postComment, patchArticleVotes, getArticleQuery, deleteComment, jsonInfo}
 
