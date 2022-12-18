@@ -10,7 +10,7 @@ beforeEach(() => seed(testData))
 
 describe('API testing', () => {
     describe('GET Requests topics', () => {
-        test('2, Should return correct values within the topics API. Format should be an array of objects for slug and description properties', () => {
+        test('200 - Should return correct values within the topics API. Format should be an array of objects for slug and description properties', () => {
             return request(app)
             .get('/api/topics')
             .expect(200)
@@ -412,8 +412,17 @@ describe('API testing', () => {
           .expect(404)
           .then(({ body: { msg } }) => {
             expect(msg).toBe("Not Found")
-
           });
         });
+    });
+    describe('API Endpoints Testing section ', () => {
+    test("200: Should return an array of topic objects, each with a slug and description properties", () => {
+        return request(app)
+          .get("/api")
+          .expect(200)
+          .then(({ body: { endpoints } }) => {
+            expect(endpoints).toBeInstanceOf(Object);
+          });
+      });
     });
 });
