@@ -8,9 +8,9 @@ const {getUsers} = require('./controllers/controllers.users')
 const app = express()
 app.use(express.json())
 
+app.get("/api", jsonInfo)
 app.get("/api/topics", getTopicPath);
 app.get("/api/users", getUsers);
-app.get("/api", jsonInfo)
 app.get("/api/articles", getArticlePath);
 app.get("/api/articles/:article_id", getArticleById);
 app.get("/api/articles/:article_id/comments", getCommentsByArticleId);
