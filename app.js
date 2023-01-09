@@ -4,8 +4,10 @@ const {getTopicPath} = require('./controllers/controllers.topic')
 const {postComment, getArticlePath, getArticleById, getCommentsByArticleId, patchArticleVotes, deleteComment} = require('./controllers/controllers.articles')
 const {psqlError, error400, error404, error500} = require('./controllers/controllers.errors')
 const {getUsers} = require('./controllers/controllers.users')
+const cors = require('cors')
 
 const app = express()
+app.use(cors())
 app.use(express.json())
 
 app.get("/api/topics", getTopicPath);
