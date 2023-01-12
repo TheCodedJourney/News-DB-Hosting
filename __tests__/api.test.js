@@ -179,7 +179,7 @@ describe('API testing', () => {
         });
     });
   
-    describe.skip('POST Request article/:id/comments', () => {
+    describe('POST Request article/:id/comments', () => {
         test("404 - responds with an error message when passed a user that does not exist", () => {
             const newComment = {
               username: "commentMaster",

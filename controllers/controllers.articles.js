@@ -23,7 +23,6 @@ const getArticleById = (request, response, next) => {
       })
   };
 
-
   const getCommentsByArticleId = (request, response, next) => {
     const articleId = request.params.article_id;
     const promises = [commentsByArticleId(articleId)];

@@ -65,14 +65,12 @@ const commentsByArticleId = (article_id) => {
   });
 };
 
-const getCurrentDate = () => moment().format("YYYY-MM-DD HH:mm:ss");
-
 const addComment = (article_id, newComment) => {
-  const { username, body } = newComment.params;
+  const { username, body } = newComment
   return db
     .query(
-      "INSERT INTO comments (body, votes, article_id, created_at, author) VALUES ($1, $2, $3, $4, $5) RETURNING *;",
-      [body, 0, article_id, getCurrentDate(), username]
+      "INSERT INTO comments (body, article_id, author) VALUES ($1, $2, $3) RETURNING *;",
+      [body, article_id, username]
     )
     .then(({ rows }) => rows[0]);
 };
