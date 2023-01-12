@@ -36,7 +36,7 @@ const postComment = (request, response, next) => {
       const { article_id } = request.params;
       addComment(article_id, request.body)
         .then((comment) => {
-          res.status(201).send({ comment });
+          response.status(201).send({ comment });
         })
         .catch(next)
     }
