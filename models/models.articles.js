@@ -1,5 +1,5 @@
-const db = require('../db/connection')
-
+const db = require("../db/connection");
+const moment = require("moment");
 
 const selectArticles = (sort_by = "created_at", order = "DESC", topic) => {
   const validSortByQueries = [
@@ -60,19 +60,22 @@ const selectByArticleID = (articleId) => {
 const commentsByArticleId = (article_id) => {
   const query = `SELECT * FROM comments
   WHERE article_id = $1 ORDER BY created_at DESC;`;
-  return db.query(query, [article_id]).then((result) => {return result.rows});
+  return db.query(query, [article_id]).then((result) => {
+    return result.rows;
+  });
 };
 
+const getCurrentDate = () => moment().format("YYYY-MM-DD HH:mm:ss");
 
 const addComment = (article_id, newComment) => {
-    const { username, body } = newComment
-    return db
-      .query(
-        "INSERT INTO comments (body, votes, article_id, created_at, author) VALUES ($1, $2, $3, $4, $5) RETURNING *;",
-        [body, 0, article_id, new Date(), username]
-      )
-      .then(({ rows }) => rows[0])
-}
+  const { username, body } = newComment.params;
+  return db
+    .query(
+      "INSERT INTO comments (body, votes, article_id, created_at, author) VALUES ($1, $2, $3, $4, $5) RETURNING *;",
+      [body, 0, article_id, getCurrentDate(), username]
+    )
+    .then(({ rows }) => rows[0]);
+};
 
 const updateArticleVotes = (article_id, newVote) => {
   const { inc_votes } = newVote;
@@ -84,7 +87,7 @@ const updateArticleVotes = (article_id, newVote) => {
     .then(({ rows }) => {
       return rows[0];
     });
-}
+};
 
 const checkItemExistence = (category, element) => {
   let query = `SELECT * FROM articles `;
@@ -92,8 +95,8 @@ const checkItemExistence = (category, element) => {
   else if (category === "article_id") query += `WHERE article_id = $1;`;
 
   return db.query(query, [element]).then((data) => {
-    if (data.rowCount === 0) 
-    return Promise.reject({ status: 404, msg: "404 Not Found" });
+    if (data.rowCount === 0)
+      return Promise.reject({ status: 404, msg: "404 Not Found" });
     else return true;
   });
 };
@@ -109,4 +112,12 @@ const deleteCommentByIdSelection = (comment_Id) => {
   });
 };
 
-module.exports = {selectArticles, selectByArticleID, commentsByArticleId, addComment, updateArticleVotes, checkItemExistence, deleteCommentByIdSelection}
+module.exports = {
+  selectArticles,
+  selectByArticleID,
+  commentsByArticleId,
+  addComment,
+  updateArticleVotes,
+  checkItemExistence,
+  deleteCommentByIdSelection,
+};
