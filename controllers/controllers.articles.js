@@ -64,16 +64,21 @@ const getArticleQuery = (request, response, next) => {
 
 const deleteComment = (request, response, next) => {
   const comment_id = request.params.comment_id;
-  const promise = [deleteCommentByIdSelection(comment_id)];
-
-  promise.push(checkItemExistence("comment_id", comment_id));
-  Promise.all(promise)
-    .then((deletedComment) => {
-      console.log("im here")
-      response.status(204).send({ deletedComment });
-    })
-    .catch((error) => next(error));
+  if (!Number.isInteger(parseInt(comment_id))) {
+    response.status(400).send({ msg: "Bad Request" });
+  } else {
+    const promise = [checkItemExistence("comment_id", comment_id), deleteCommentByIdSelection(comment_id)];
+    Promise.all(promise)
+      .then((deletedComment) => {
+        if (!deletedComment) {
+          response.status(404).send("Not Found");
+        } else {
+          response.status(204).send({ deletedComment });
+        }
+      })
+      .catch((error) => next(error));
   }
+};
 
   const jsonInfo = (request, response, next) => {
     response.status(200).send({ endpoints });
