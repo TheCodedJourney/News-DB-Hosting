@@ -92,22 +92,26 @@ const checkItemExistence = (category, element) => {
   if (category === "topic") query += `WHERE topic = $1;`;
   else if (category === "article_id") query += `WHERE article_id = $1;`;
 
-  return db.query(query, [element]).then((data) => {
-    if (data.rowCount === 0)
-      return Promise.reject({ status: 404, msg: "404 Not Found" });
-    else return true;
-  });
+  return db.query(query, [element])
+    .then((result) => {
+      if (result.rowCount === 0) {
+        return Promise.reject({ status: 404, msg: "404 Not Found" });
+      }
+      return result.rows;
+    })
 };
 
 const deleteCommentByIdSelection = (comment_Id) => {
   const queryString = `
-  DELETE FROM comments
-  WHERE comment_id = $1
-  RETURNING *;
+      DELETE FROM comments
+      WHERE comment_id = ${comment_Id}
+      RETURNING *;
   `;
-  return db.query(queryString, [comment_Id]).then(({ rows }) => {
-    return rows;
-  });
+  return db.query(queryString)
+  .then(({ rows }) => {
+      return rows;
+  })
+  
 };
 
 module.exports = {
