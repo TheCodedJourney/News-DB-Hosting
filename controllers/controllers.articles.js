@@ -1,4 +1,4 @@
-const {selectArticles, selectByArticleID, commentsByArticleId, addComment, updateArticleVotes, checkItemExistence, articleQuery, deleteCommentByIdSelection} = require('../models/models.articles')
+const {selectArticles, selectByArticleID, commentsByArticleId, addComment, checkCommentExistence, updateArticleVotes, checkItemExistence, articleQuery, deleteCommentByIdSelection} = require('../models/models.articles')
 const endpoints = require("../endpoints.json");
 
 const getArticlePath = (request, response, next) => {
@@ -67,16 +67,18 @@ const deleteComment = (request, response, next) => {
   if (!Number.isInteger(parseInt(comment_id))) {
     response.status(400).send({ msg: "Bad Request" });
   } else {
-    const promise = [checkItemExistence("comment_id", comment_id), deleteCommentByIdSelection(comment_id)];
-    Promise.all(promise)
+    checkCommentExistence(comment_id)
+    .then(() => deleteCommentByIdSelection(comment_id))
       .then((deletedComment) => {
-        if (!deletedComment) {
-          response.status(404).send("Not Found");
-        } else {
           response.status(204).send({ deletedComment });
-        }
       })
-      .catch((error) => next(error));
+      .catch((error) => {
+        if(error.status === 404) {
+          response.status(404).send({ msg: "Not Found" });
+        } else {
+          next(error);
+        }
+      });
   }
 };
 

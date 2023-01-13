@@ -92,26 +92,40 @@ const checkItemExistence = (category, element) => {
   if (category === "topic") query += `WHERE topic = $1;`;
   else if (category === "article_id") query += `WHERE article_id = $1;`;
 
-  return db.query(query, [element])
+  return db.query(query, [element]).then((data) => {
+    if (data.rowCount === 0)
+      return Promise.reject({ status: 404, msg: "404 Not Found" });
+    else return true;
+  });
+};
+
+const checkCommentExistence = (comment_id) => {
+  const query = `SELECT * FROM comments WHERE comment_id = $1`;
+  return db.query(query, [comment_id])
     .then((result) => {
       if (result.rowCount === 0) {
         return Promise.reject({ status: 404, msg: "404 Not Found" });
       }
       return result.rows;
     })
+    .catch((error) => {
+      return Promise.reject({ status: 404, msg: "Not Found", error });
+    });
 };
 
-const deleteCommentByIdSelection = (comment_Id) => {
-  const queryString = `
-      DELETE FROM comments
-      WHERE comment_id = ${comment_Id}
-      RETURNING *;
-  `;
-  return db.query(queryString)
-  .then(({ rows }) => {
-      return rows;
+
+const deleteCommentByIdSelection = (comment_id) => {
+  const query = `DELETE FROM comments WHERE comment_id = $1 RETURNING *`;
+  return db.query(query, [comment_id])
+  .then((result) => {
+    if(result.rowCount === 0) {
+        return Promise.reject({ status: 404, msg: "404 Not Found" });
+    }
+    return result.rows;
   })
-  
+  .catch((error) => {
+    return Promise.reject({ status: 404, msg: "Not Found" });
+  });
 };
 
 module.exports = {
@@ -121,5 +135,6 @@ module.exports = {
   addComment,
   updateArticleVotes,
   checkItemExistence,
+  checkCommentExistence,
   deleteCommentByIdSelection,
 };
